@@ -68,6 +68,14 @@ const AdminLayout: React.FC = () => {
 
         {/* Bottom */}
         <div style={{ padding: '12px 8px', borderTop: '1px solid #e2e8f0' }}>
+          <button onClick={() => navigate('/')} style={{
+            width: '100%', padding: '8px 10px', borderRadius: 8,
+            border: 'none', background: 'transparent', color: '#6366f1',
+            cursor: 'pointer', fontSize: 13, textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10,
+          }}>
+            <span style={{ fontSize: 15 }}>⬅</span>
+            {!collapsed && 'Back to Store'}
+          </button>
           <button onClick={() => setCollapsed(c => !c)} style={{
             width: '100%', padding: '8px 10px', borderRadius: 8,
             border: 'none', background: 'transparent', color: '#94a3b8',
