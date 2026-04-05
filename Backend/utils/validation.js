@@ -67,10 +67,10 @@ const productSchemas = {
         'string.min': 'Product name must be at least 2 characters',
         'string.max': 'Product name must be less than 100 characters'
       }),
-    description: Joi.string().trim().min(10).max(1000).required()
+    description: Joi.string().trim().min(5).max(1000).required()
       .messages({
         'string.empty': 'Product description is required',
-        'string.min': 'Description must be at least 10 characters',
+        'string.min': 'Description must be at least 5 characters',
         'string.max': 'Description must be less than 1000 characters'
       }),
     price: Joi.number().positive().required()
@@ -100,9 +100,9 @@ const productSchemas = {
         'string.min': 'Product name must be at least 2 characters',
         'string.max': 'Product name must be less than 100 characters'
       }),
-    description: Joi.string().trim().min(10).max(1000)
+    description: Joi.string().trim().min(5).max(1000)
       .messages({
-        'string.min': 'Description must be at least 10 characters',
+        'string.min': 'Description must be at least 5 characters',
         'string.max': 'Description must be less than 1000 characters'
       }),
     price: Joi.number().positive()

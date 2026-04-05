@@ -97,8 +97,11 @@ const AdminProducts: React.FC = () => {
                 <input style={inputStyle} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} type="text" />
               </div>
               <div>
-                <label style={labelStyle}>Description</label>
-                <textarea style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
+                <label style={labelStyle}>Description (min 10 characters)</label>
+                <textarea style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Describe the product in detail..." />
+                <div style={{ fontSize: '11px', color: form.description.length < 10 ? '#ef4444' : '#22c55e', marginTop: '4px' }}>
+                  {form.description.length}/10 minimum
+                </div>
               </div>
               <div>
                 <label style={labelStyle}>Category</label>
