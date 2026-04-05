@@ -13,6 +13,8 @@ const AdminProducts: React.FC = () => {
   const [saving, setSaving]       = useState(false);
   const [error, setError]         = useState('');
   const [imagePreview, setImagePreview] = useState<string>('');
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; productId: string | null; productName: string }>({ show: false, productId: null, productName: '' });
+  const [deleting, setDeleting]   = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
@@ -74,10 +76,23 @@ const AdminProducts: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete product?')) return;
-    await fetch(`/api/products/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token()}` } });
-    load();
+  const openDeleteModal = (productId: string, productName: string) => {
+    setDeleteModal({ show: true, productId, productName });
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal.productId) return;
+    setDeleting(true);
+    try {
+      const r = await fetch(`/api/products/${deleteModal.productId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token()}` } });
+      if (!r.ok) throw new Error('Failed to delete');
+      setDeleteModal({ show: false, productId: null, productName: '' });
+      load();
+    } catch (e: any) {
+      console.error('Delete error:', e);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   return (
@@ -86,6 +101,19 @@ const AdminProducts: React.FC = () => {
         <h1 style={{ color: '#0f172a', fontSize: 24, fontWeight: 700 }}>Inventory</h1>
         <button onClick={openCreate} style={btnStyle('#6366f1')}>+ New Product</button>
       </div>
+
+      {deleteModal.show && (
+        <div style={modalOverlay} onClick={() => setDeleteModal({ show: false, productId: null, productName: '' })}>
+          <div style={{...modalContent, width: 380}} onClick={e => e.stopPropagation()}>
+            <h2 style={{ color: '#0f172a', fontSize: 18, marginBottom: 8, fontWeight: 700 }}>Delete Product?</h2>
+            <p style={{ color: '#64748b', fontSize: 14, marginBottom: 20 }}>Are you sure you want to delete <strong>"{deleteModal.productName}"</strong>? This action cannot be undone.</p>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={handleDelete} disabled={deleting} style={{ ...btnStyle('#ef4444'), flex: 1 }}>{deleting ? 'Deleting...' : 'Delete'}</button>
+              <button onClick={() => setDeleteModal({ show: false, productId: null, productName: '' })} style={{ ...btnStyle('#f1f5f9', false), color: '#475569', flex: 1 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <div style={modalOverlay} onClick={() => setShowForm(false)}>
@@ -148,7 +176,7 @@ const AdminProducts: React.FC = () => {
                 <td style={tdStyle}>{p.stock}</td>
                 <td style={tdStyle}>
                   <button onClick={() => openEdit(p)} style={actionBtn('#6366f1')}>Edit</button>
-                  <button onClick={() => handleDelete(p._id)} style={actionBtn('#ef4444')}>Delete</button>
+                  <button onClick={() => openDeleteModal(p._id, p.name)} style={actionBtn('#ef4444')}>Delete</button>
                 </td>
               </tr>
             ))}
