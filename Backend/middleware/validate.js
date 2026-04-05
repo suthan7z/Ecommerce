@@ -9,9 +9,11 @@ const validate = (schema) => {
       // Format validation errors
       const errors = error.details.map(detail => ({
         field: detail.path.join('.'),
-        message: detail.message
+        message: detail.message,
+        value: req.body[detail.path[0]]
       }));
 
+      console.error('❌ Validation Error:', errors);
       return res.status(400).json({
         message: 'Validation failed',
         errors

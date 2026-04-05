@@ -52,6 +52,7 @@ const AdminProducts: React.FC = () => {
     setSaving(true);
     try {
       const body = { ...form, price: Number(form.price), stock: Number(form.stock) };
+      console.log('📤 Sending product:', body);
       const url = editing ? `/api/products/${editing._id}` : '/api/products';
       const r = await fetch(url, {
         method: editing ? 'PUT' : 'POST',
@@ -59,12 +60,14 @@ const AdminProducts: React.FC = () => {
         body: JSON.stringify(body),
       });
       const data = await r.json().catch(() => ({}));
+      console.log('📥 Response:', r.status, data);
       if (!r.ok) {
-        throw new Error(data?.message || 'Failed to save');
+        throw new Error(data?.message || data?.errors?.[0]?.message || 'Failed to save');
       }
       setShowForm(false);
       load();
     } catch (e: any) {
+      console.error('❌ Error:', e.message);
       setError(e.message || 'Failed to save');
     } finally {
       setSaving(false);
