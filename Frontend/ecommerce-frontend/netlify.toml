@@ -1,0 +1,12 @@
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://ecommerce-i1am.onrender.com/api/:splat"
+  status = 200
+  force = true
+
+# SPA fallback — makes React Router work on Netlify
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
