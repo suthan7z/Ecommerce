@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 const token = () => localStorage.getItem('token');
+const categoryOptions = ['Electronics', 'Clothing', 'Books', 'Home', 'Sports', 'Beauty', 'Toys', 'Other'];
 const emptyForm = { name: '', description: '', price: '', category: '', stock: '', image: '' };
 
 const AdminProducts: React.FC = () => {
@@ -27,7 +28,7 @@ const AdminProducts: React.FC = () => {
   const openCreate = () => { setEditing(null); setForm(emptyForm); setImagePreview(''); setShowForm(true); setError(''); };
   const openEdit = (p: any) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description, price: String(p.price), category: p.category, stock: String(p.stock), image: p.image || '' });
+    setForm({ name: p.name, description: p.description || '', price: String(p.price), category: p.category, stock: String(p.stock), image: p.image || '' });
     setImagePreview(p.image || '');
     setShowForm(true); setError('');
   };
@@ -47,7 +48,7 @@ const AdminProducts: React.FC = () => {
   const clearImage = () => { setForm(f => ({ ...f, image: '' })); setImagePreview(''); if (fileInputRef.current) fileInputRef.current.value = ''; };
 
   const handleSave = async () => {
-    if (!form.name || !form.price || !form.category || !form.stock) { setError('Missing required fields'); return; }
+    if (!form.name || !form.description || !form.price || !form.category || !form.stock) { setError('Missing required fields'); return; }
     setSaving(true);
     try {
       const body = { ...form, price: Number(form.price), stock: Number(form.stock) };
@@ -80,13 +81,27 @@ const AdminProducts: React.FC = () => {
           <div style={modalContent} onClick={e => e.stopPropagation()}>
             <h2 style={{ color: '#0f172a', fontSize: 18, marginBottom: 20 }}>{editing ? 'Edit Product' : 'Add Product'}</h2>
             <div style={{ display: 'grid', gap: 16 }}>
-              {[['name', 'Name'], ['category', 'Category'], ['price', 'Price'], ['stock', 'Stock']].map(([key, label]) => (
+              <div>
+                <label style={labelStyle}>Name</label>
+                <input style={inputStyle} value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} type="text" />
+              </div>
+              <div>
+                <label style={labelStyle}>Description</label>
+                <textarea style={{ ...inputStyle, minHeight: '80px', resize: 'vertical' }} value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
+              </div>
+              <div>
+                <label style={labelStyle}>Category</label>
+                <select style={inputStyle} value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
+                  <option value="">Select a category</option>
+                  {categoryOptions.map(option => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </div>
+              {['price', 'stock'].map(key => (
                 <div key={key}>
-                  <label style={labelStyle}>{label}</label>
-                  <input style={inputStyle} value={form[key as keyof typeof form]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} type={['price', 'stock'].includes(key) ? 'number' : 'text'} />
+                  <label style={labelStyle}>{key === 'price' ? 'Price' : 'Stock'}</label>
+                  <input style={inputStyle} value={form[key as keyof typeof form]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} type="number" />
                 </div>
               ))}
-              
               <div>
                 <label style={labelStyle}>Product Image</label>
                 <div onClick={() => fileInputRef.current?.click()} style={uploadBox}>
@@ -131,8 +146,8 @@ const AdminProducts: React.FC = () => {
 };
 
 // --- Styles ---
-const modalOverlay: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };
-const modalContent: React.CSSProperties = { background: '#fff', padding: 24, borderRadius: 16, width: 450, boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' };
+const modalOverlay: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: 16 };
+const modalContent: React.CSSProperties = { background: '#fff', padding: 24, borderRadius: 16, width: 450, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' };
 const labelStyle: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 600, color: '#64748b', marginBottom: 4, textTransform: 'uppercase' };
 const inputStyle: React.CSSProperties = { width: '100%', padding: '10px', borderRadius: 8, border: '1px solid #cbd5e1', outline: 'none', boxSizing: 'border-box' };
 const btnStyle = (bg: string, isPrimary = true): React.CSSProperties => ({ background: bg, color: isPrimary ? '#fff' : '#475569', padding: '10px 16px', borderRadius: 8, border: 'none', fontWeight: 600, cursor: 'pointer' });

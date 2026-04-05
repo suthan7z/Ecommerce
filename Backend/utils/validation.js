@@ -88,9 +88,9 @@ const productSchemas = {
       .messages({
         'number.min': 'Stock cannot be negative'
       }),
-    image: Joi.string().uri()
+    image: Joi.string().optional()
       .messages({
-        'string.uri': 'Image must be a valid URL'
+        'string.base': 'Image must be a string'
       })
   }),
 
@@ -118,9 +118,9 @@ const productSchemas = {
       .messages({
         'number.min': 'Stock cannot be negative'
       }),
-    image: Joi.string().uri()
+    image: Joi.string().optional()
       .messages({
-        'string.uri': 'Image must be a valid URL'
+        'string.base': 'Image must be a string'
       })
   }),
 
