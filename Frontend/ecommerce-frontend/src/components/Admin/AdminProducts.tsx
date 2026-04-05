@@ -58,9 +58,17 @@ const AdminProducts: React.FC = () => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
         body: JSON.stringify(body),
       });
-      if (!r.ok) throw new Error('Failed to save');
-      setShowForm(false); load();
-    } catch (e: any) { setError(e.message); } finally { setSaving(false); }
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        throw new Error(data?.message || 'Failed to save');
+      }
+      setShowForm(false);
+      load();
+    } catch (e: any) {
+      setError(e.message || 'Failed to save');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
